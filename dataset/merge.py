@@ -1,3 +1,10 @@
+'''
+This file creates judge.csv and sum.csv which is used for analysis of this dataset
+More details can be found in ../analysis
+'''
+
+
+
 import os
 
 #creating sum.csv files
@@ -35,6 +42,15 @@ with open(output_file, "w") as f_out:
 #Now as we have created two files, its time to zip these two files into one csvdataset.zip
 #We have to do this because judge.csv was very large and was exceeding github's max limit
 
-os.system("zip csvdataset.zip judge.csv sum.csv")
+import pandas as pd
+judgements = pd.read_csv('judge.csv',sep='\t',names=['filename','judgement'])
+summaries = pd.read_csv('sum.csv',sep='\t',names=['filename','summary'])
+
+dataset = pd.merge(judgements, summaries, on='filename')
+dataset = dataset.dropna()
+
+dataset.to_csv('dataset.csv', index=False)
+
+# Now create dataset.csv which basically combines judge.csv and sum.csv
 os.system("rm judge.csv")
 os.system("rm sum.csv")
